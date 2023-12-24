@@ -13,15 +13,20 @@
     "types": "./dist/index.d.ts",
     "type": "module",
     "files": [
+        "dist/esm/index.js",
+        "dist/esm/index.js.map",
         "dist/esm/index.min.js",
         "dist/esm/index.min.js.map",
         "dist/index.d.ts",
+        "dist/system/index.js",
+        "dist/system/index.js.map",
         "dist/system/index.min.js",
         "dist/system/index.min.js.map"
     ],
     "keywords": [
-        "my",
-        "lib"
+        "math",
+        "exprression",
+        "tree"
     ],
     "publishConfig": {
         "access": "public"
