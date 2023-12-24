@@ -12,7 +12,6 @@
     "main": "./dist/commonjs/index,js",
     "module": "./dist/esm/index.min.js",
     "types": "./dist/index.d.ts",
-    "type": "module",
     "files": [
         "dist/commonjs/index.js",
         "dist/commonjs/index.js.map",

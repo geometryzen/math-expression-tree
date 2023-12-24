@@ -16,9 +16,9 @@ rollup.config.mjs
 rollup.config.mts
 tsconfig.json
 typedoc.json
-dist/cjs/index.d.ts
-dist/cjs/src/index.d.ts
-dist/cjs/tests/**/*.*
+dist/commonjs/index.d.ts
+dist/commonjs/src/index.d.ts
+dist/commonjs/tests/**/*.*
 dist/esm/index.d.ts
 dist/esm/src/index.d.ts
 dist/esm/tests/**/*.*
