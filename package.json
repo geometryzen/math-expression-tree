@@ -1,7 +1,7 @@
 {
-    "name": "@geometryzen/my-lib",
+    "name": "math-expression-tree",
     "version": "0.9.5",
-    "description": "My Library",
+    "description": "Data structure for constructing math expressions",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -43,7 +43,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/geometryzen/my-lib.git"
+        "url": "git+https://github.com/geometryzen/math-expression-tree.git"
     },
     "author": {
         "name": "David Geo Holmes",
@@ -51,9 +51,9 @@
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/geometryzen/my-lib/issues"
+        "url": "https://github.com/geometryzen/math-expression-tree/issues"
     },
-    "homepage": "https://github.com/geometryzen/my-lib#readme",
+    "homepage": "https://github.com/geometryzen/math-expression-tree#readme",
     "devDependencies": {
         "@rollup/plugin-commonjs": "^25.0.7",
         "@rollup/plugin-node-resolve": "^15.2.3",
