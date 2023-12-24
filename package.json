@@ -6,12 +6,13 @@
         ".": {
             "types": "./dist/index.d.ts",
             "system": "./dist/system/index.min.js",
-            "default": "./dist/esm/index.min.js"
+            "default": "./dist/commonjs/index.js"
         }
     },
     "main": "./dist/commonjs/index,js",
     "module": "./dist/esm/index.min.js",
     "types": "./dist/index.d.ts",
+    "type": "module",
     "files": [
         "dist/commonjs/index.js",
         "dist/commonjs/index.js.map",
