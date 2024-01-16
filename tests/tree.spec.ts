@@ -1,4 +1,4 @@
-import { car, cdr, cons, equal_cons_cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
+import { car, cdr, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
 
 class Atom implements U {
     readonly name = "Atom";
@@ -95,15 +95,15 @@ test("equal_cons_cons", function () {
     const bar = new Atom("bar");
     const X = items_to_cons(foo);
     const Y = items_to_cons(foo, bar);
-    expect(equal_cons_cons(nil, nil)).toBe(true);
-    expect(equal_cons_cons(nil, X)).toBe(false);
-    expect(equal_cons_cons(nil, Y)).toBe(false);
-    expect(equal_cons_cons(X, nil)).toBe(false);
-    expect(equal_cons_cons(X, X)).toBe(true);
-    expect(equal_cons_cons(X, Y)).toBe(false);
-    expect(equal_cons_cons(Y, nil)).toBe(false);
-    expect(equal_cons_cons(Y, X)).toBe(false);
-    expect(equal_cons_cons(Y, Y)).toBe(true);
+    expect(nil.equals(nil)).toBe(true);
+    expect(nil.equals(X)).toBe(false);
+    expect(nil.equals(Y)).toBe(false);
+    expect(X.equals(nil)).toBe(false);
+    expect(X.equals(X)).toBe(true);
+    expect(X.equals(Y)).toBe(false);
+    expect(Y.equals(nil)).toBe(false);
+    expect(Y.equals(X)).toBe(false);
+    expect(Y.equals(Y)).toBe(true);
 });
 test("isCons()", function () {
     expect(nil.isCons()).toBe(false);

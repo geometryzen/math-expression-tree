@@ -62,7 +62,7 @@ export function is_singleton(expr: Cons): boolean {
 export class Cons implements U {
     #car: U | undefined;
     #cdr: U | undefined;
-    constructor(car: U | undefined, cdr: U | undefined, public pos?: number, public end?: number) {
+    constructor(car: U | undefined, cdr: U | undefined, public readonly pos?: number, public readonly end?: number) {
         this.#car = car;
         this.#cdr = cdr;
     }
@@ -208,7 +208,7 @@ export class Cons implements U {
         if (this !== nil) {
             const a = this.car;
             const b = this.cdr;
-            return new Cons(f(a), is_cons(b) ? b.map(f) : b);
+            return new Cons(f(a), is_cons(b) ? b.map(f) : b, this.pos, this.end);
         }
         else {
             return nil;
@@ -282,28 +282,32 @@ export class Cons implements U {
     }
 }
 
-export function cons(car: U, cdr: U): Cons {
+export function cons(car: U, cdr: U, pos?: number, end?: number): Cons {
     if (cdr instanceof Cons) {
-        return new Cons(car, cdr);
+        return new Cons(car, cdr, pos, end);
     }
     else {
         throw new Error();
     }
 }
 
-export function items_to_cons(...items: U[]): Cons {
+export function pos_end_items_to_cons(pos: number, end: number, ...items: U[]): Cons {
     let node: Cons = nil;
     // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
     for (let i = items.length - 1; i >= 0; i--) {
-        node = new Cons(items[i], node);
+        node = new Cons(items[i], node, pos, end);
     }
     return node;
+}
+
+export function items_to_cons(...items: U[]): Cons {
+    return pos_end_items_to_cons(void 0, void 0, ...items);
 }
 
 /**
  * The empty list.
  */
-export const nil = new Cons(void 0, void 0);
+export const nil = new Cons(void 0, void 0, void 0, void 0);
 
 export function is_atom(expr: U): boolean {
     if (is_cons(expr)) {
@@ -370,7 +374,7 @@ export function cdr(node: U): Cons {
     }
 }
 
-export function equal_cons_cons(lhs: Cons, rhs: Cons): boolean {
+function equal_cons_cons(lhs: Cons, rhs: Cons): boolean {
     let p1: U = lhs;
     let p2: U = rhs;
     // eslint-disable-next-line no-constant-condition
