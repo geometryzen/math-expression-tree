@@ -10,8 +10,8 @@ export interface U {
     equals(other: U): boolean;
     isCons(): boolean;
     isNil(): boolean;
-    readonly pos?: number;
-    readonly end?: number;
+    pos?: number;
+    end?: number;
 }
 
 /**
@@ -62,7 +62,7 @@ export function is_singleton(expr: Cons): boolean {
 export class Cons implements U {
     #car: U | undefined;
     #cdr: U | undefined;
-    constructor(car: U | undefined, cdr: U | undefined, readonly pos?: number, readonly end?: number) {
+    constructor(car: U | undefined, cdr: U | undefined, public pos?: number, public end?: number) {
         this.#car = car;
         this.#cdr = cdr;
     }
@@ -305,7 +305,7 @@ export function items_to_cons(...items: U[]): Cons {
  */
 export const nil = new Cons(void 0, void 0);
 
-export function is_atom(expr: U) {
+export function is_atom(expr: U): boolean {
     if (is_cons(expr)) {
         return false;
     }
