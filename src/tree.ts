@@ -300,12 +300,22 @@ export function cons(car: U, cdr: U, pos?: number, end?: number): Cons {
 }
 
 export function pos_end_items_to_cons(pos: number, end: number, ...items: U[]): Cons {
-    let node: Cons = nil;
-    // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
-    for (let i = items.length - 1; i >= 0; i--) {
-        node = new Cons(items[i], node, pos, end);
+    if (items.length > 0) {
+        let node: Cons = nil;
+        // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
+        for (let i = items.length - 1; i >= 0; i--) {
+            node = new Cons(items[i], node, pos, end);
+        }
+        return node;
     }
-    return node;
+    else {
+        if (typeof pos === 'number' || typeof end === 'number') {
+            return new Cons(void 0, void 0, pos, end);
+        }
+        else {
+            return nil;
+        }
+    }
 }
 
 export function items_to_cons(...items: U[]): Cons {
