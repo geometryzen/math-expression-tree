@@ -20,12 +20,12 @@ export interface U {
  * @returns 
  */
 export function is_singleton(expr: Cons): boolean {
-    if (nil === expr) {
+    if (expr.isNil()) {
         // Nope, it's the empty list.
         return false;
     }
     const cdr_expr = expr.cdr;
-    if (nil === cdr_expr) {
+    if (cdr_expr.isNil()) {
         return true;
     }
     else {
@@ -135,6 +135,12 @@ export class Cons implements U {
         if (is_cons(other)) {
             return equal_cons_cons(this, other);
         }
+        else if (is_atom(other)) {
+            return false;
+        }
+        else if (other.isNil()) {
+            return this.isNil();
+        }
         else {
             return false;
         }
@@ -190,7 +196,10 @@ export class Cons implements U {
      * Return everything except the first item in the list.
      */
     tail(): U[] {
-        if (this !== nil) {
+        if (this.isNil()) {
+            throw new Error("tail property is not allowed for the empty list.");
+        }
+        else {
             const cdr = this.#cdr;
             if (cdr && is_cons(cdr)) {
                 return [...cdr];
@@ -199,19 +208,18 @@ export class Cons implements U {
                 return [];
             }
         }
-        throw new Error("tail property is not allowed for the empty list.");
     }
     /**
      * Maps the elements of the list using a mapping function.
      */
     map(f: (a: U) => U): Cons {
-        if (this !== nil) {
+        if (this.isNil()) {
+            return this;
+        }
+        else {
             const a = this.car;
             const b = this.cdr;
             return new Cons(f(a), is_cons(b) ? b.map(f) : b, this.pos, this.end);
-        }
-        else {
-            return nil;
         }
     }
     /**
@@ -219,7 +227,10 @@ export class Cons implements U {
      */
     get length(): number {
         // console.lg("Cons.length", "is_cons", is_cons(this), "is_nil", is_nil(this));
-        if (this !== nil) {
+        if (this.isNil()) {
+            return 0;
+        }
+        else {
             const argList = this.argList;
             if (is_cons(argList)) {
                 return argList.length + 1;
@@ -227,9 +238,6 @@ export class Cons implements U {
             else {
                 return 1;
             }
-        }
-        else {
-            return 0;
         }
     }
     /**
@@ -267,7 +275,7 @@ export class Cons implements U {
      * (item0 item1 item2 ...)
      */
     item(index: number): U {
-        if (index >= 0 && this !== nil) {
+        if (index >= 0 && !this.isNil()) {
             if (index === 0) {
                 return this.car;
             }
@@ -331,7 +339,7 @@ export function is_cons(expr: U): expr is Cons {
     }
     else {
         if (expr instanceof Cons) {
-            return !is_nil(expr);
+            return !expr.isNil();
         }
         else {
             return false;
@@ -339,13 +347,11 @@ export function is_cons(expr: U): expr is Cons {
     }
 }
 
+/**
+ * 
+ */
 export function is_nil(expr: U): boolean {
-    if (expr instanceof Cons) {
-        return expr.equals(nil);
-    }
-    else {
-        return expr.equals(nil);
-    }
+    return expr.isNil();
 }
 
 /**

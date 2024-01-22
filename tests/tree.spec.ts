@@ -1,4 +1,4 @@
-import { car, cdr, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
+import { car, cdr, Cons, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
 
 class Atom implements U {
     readonly name = "Atom";
@@ -241,4 +241,13 @@ test("cdr(node:U): U", function () {
     const foo = new Atom("foo");
     const X = cons(foo, nil);
     expect(cdr(X)).toBe(nil);
+});
+test("empty", function () {
+    const empty = new Cons(void 0, void 0, 23, 26);
+    expect(empty.isNil()).toBe(true);
+    expect(empty.isCons()).toBe(false);
+    expect(empty.equals(nil)).toBe(true);
+    expect(empty.length).toBe(0);
+    expect(is_nil(empty)).toBe(true);
+    expect(cdr(empty)).toBe(nil);
 });
