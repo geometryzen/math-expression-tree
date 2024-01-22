@@ -299,13 +299,14 @@ export function cons(car: U, cdr: U, pos?: number, end?: number): Cons {
     }
 }
 
-export function pos_end_items_to_cons(pos: number, end: number, ...items: U[]): Cons {
+export function pos_end_items_to_cons(pos: number | undefined, end: number | undefined, ...items: U[]): Cons {
     if (items.length > 0) {
         let node: Cons = nil;
         // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
-        for (let i = items.length - 1; i >= 0; i--) {
-            node = new Cons(items[i], node, pos, end);
+        for (let i = items.length - 1; i > 0; i--) {
+            node = new Cons(items[i], node, void 0, void 0);
         }
+        node = new Cons(items[0], node, pos, end);
         return node;
     }
     else {
