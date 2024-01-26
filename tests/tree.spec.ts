@@ -1,9 +1,25 @@
 import { car, cdr, Cons, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
 
+/**
+ * This is just a test atom, so we expose the reference count.
+ */
 class Atom implements U {
     readonly name = "Atom";
+    #refCount = 1;
     constructor(readonly value: string) {
 
+    }
+    #destructor(): void {
+
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            this.#destructor();
+        }
     }
     contains(needle: U): boolean {
         return this.equals(needle);
@@ -26,6 +42,9 @@ class Atom implements U {
     }
     isNil(): boolean {
         return false;
+    }
+    get refCount(): number {
+        return this.#refCount;
     }
     toString(): string {
         return `Atom('${this.value}')`;

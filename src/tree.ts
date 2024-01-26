@@ -6,10 +6,12 @@ export interface U {
      * Contains the name of the type.
      */
     readonly name: string;
+    addRef(): void;
     contains(needle: U): boolean;
     equals(other: U): boolean;
     isCons(): boolean;
     isNil(): boolean;
+    release(): void;
     pos?: number;
     end?: number;
 }
@@ -62,9 +64,35 @@ export function is_singleton(expr: Cons): boolean {
 export class Cons implements U {
     #car: U | undefined;
     #cdr: U | undefined;
+    #refCount = 1;
     constructor(car: U | undefined, cdr: U | undefined, public readonly pos?: number, public readonly end?: number) {
-        this.#car = car;
-        this.#cdr = cdr;
+        if (car) {
+            car.addRef();
+            this.#car = car;
+        }
+        if (cdr) {
+            cdr.addRef();
+            this.#cdr = cdr;
+        }
+    }
+    #destructor(): void {
+        if (this.#car) {
+            this.#car.release();
+            this.#car = void 0;
+        }
+        if (this.#cdr) {
+            this.#cdr.release();
+            this.#cdr = void 0;
+        }
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount == 0) {
+            this.#destructor();
+        }
     }
     get name(): 'Cons' | 'Nil' {
         if (this.#car) {
@@ -76,9 +104,11 @@ export class Cons implements U {
     }
     /**
      * Returns the car property if it is defined, otherwise NIL.
+     * The returned item is reference counted.
      */
     get car(): U {
         if (this.#car) {
+            this.#car.addRef();
             return this.#car;
         }
         else {
@@ -87,10 +117,12 @@ export class Cons implements U {
     }
     /**
      * Returns the cdr property if it is defined, otherwise NIL.
+     * The returned item is reference counted.
      */
     get cdr(): Cons {
         if (this.#cdr) {
             if (this.#cdr instanceof Cons) {
+                this.#cdr.addRef();
                 return this.#cdr;
             }
             else {
@@ -105,13 +137,15 @@ export class Cons implements U {
      * Exactly the same as the cdr property. Used for code-as-documentation.
      */
     get argList(): Cons {
+        // The returned value is correctly reference counted because of the call through the external API.
         return this.cdr;
     }
     /**
      * An convenience for cdr.car for use with (power base expo) expressions.
      */
     get base(): U {
-        return this.argList.head;
+        const argList = this.argList;
+        return argList.head;
     }
     /**
      * An convenience for cdr.cdr.car for use with (power base expo) expressions.
