@@ -78,11 +78,11 @@ export class Cons implements U {
     #destructor(): void {
         if (this.#car) {
             this.#car.release();
-            this.#car = void 0;
+            // this.#car = void 0;
         }
         if (this.#cdr) {
             this.#cdr.release();
-            this.#cdr = void 0;
+            // this.#cdr = void 0;
         }
     }
     addRef(): void {
