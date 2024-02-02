@@ -37,10 +37,10 @@ class Atom implements U {
             }
         }
     }
-    iscons(): boolean {
+    get iscons(): boolean {
         return false;
     }
-    isnil(): boolean {
+    get isnil(): boolean {
         return false;
     }
     get refCount(): number {
@@ -125,16 +125,16 @@ test("equal_cons_cons", function () {
     expect(Y.equals(Y)).toBe(true);
 });
 test("iscons()", function () {
-    expect(nil.iscons()).toBe(false);
+    expect(nil.iscons).toBe(false);
     const foo = new Atom("foo");
     const X = items_to_cons(foo);
-    expect(X.iscons()).toBe(true);
+    expect(X.iscons).toBe(true);
 });
 test("Cons.isnil()", function () {
-    expect(nil.isnil()).toBe(true);
+    expect(nil.isnil).toBe(true);
     const foo = new Atom("foo");
     const X = items_to_cons(foo);
-    expect(X.isnil()).toBe(false);
+    expect(X.isnil).toBe(false);
 });
 test("Cons.contains(needle: U): boolean", function () {
     const foo = new Atom("foo");
@@ -263,8 +263,8 @@ test("cdr(node:U): U", function () {
 });
 test("empty", function () {
     const empty = new Cons(void 0, void 0, 23, 26);
-    expect(empty.isnil()).toBe(true);
-    expect(empty.iscons()).toBe(false);
+    expect(empty.isnil).toBe(true);
+    expect(empty.iscons).toBe(false);
     expect(empty.equals(nil)).toBe(true);
     expect(empty.length).toBe(0);
     expect(is_nil(empty)).toBe(true);

@@ -9,8 +9,8 @@ export interface U {
     addRef(): void;
     contains(needle: U): boolean;
     equals(other: U): boolean;
-    iscons(): boolean;
-    isnil(): boolean;
+    get iscons(): boolean;
+    get isnil(): boolean;
     release(): void;
     pos?: number;
     end?: number;
@@ -22,12 +22,12 @@ export interface U {
  * @returns 
  */
 export function is_singleton(expr: Cons): boolean {
-    if (expr.isnil()) {
+    if (expr.isnil) {
         // Nope, it's the empty list.
         return false;
     }
     const cdr_expr = expr.cdr;
-    if (cdr_expr.isnil()) {
+    if (cdr_expr.isnil) {
         return true;
     }
     else {
@@ -43,22 +43,22 @@ export function is_singleton(expr: Cons): boolean {
  * The car links go downwards, the cdr links go to the right.
  *
  *           _______      _______                                            _______      _______
- *          |CONS   |--->|CONS   |----------------------------------------->|CONS   |--->|NIL    |
+ *          |cons   |--->|cons   |----------------------------------------->|cons   |--->|nil    |
  *          |       |    |       |                                          |       |    |       |
  *          |_______|    |_______|                                          |_______|    |_______|       
  *              |            |                                                  |
  *           ___v___      ___v___      _______      _______      _______     ___v___
- *          |SYM +  |    |CONS   |--->|CONS   |--->|CONS   |--->|NIL    |   |SYM c  |
+ *          |   +   |    |cons   |--->|cons   |--->|cons   |--->|nil    |   |   c   |
  *          |       |    |       |    |       |    |       |    |       |   |       |
  *          |_______|    |_______|    |_______|    |_______|    |_______|   |_______|
  *                           |            |            |
  *                        ___v___      ___v___      ___v___
- *                       |SYM *  |    |SYM a  |    |SYM b  |
+ *                       |   *   |    |   a   |    |   b   |
  *                       |       |    |       |    |       |
  *                       |_______|    |_______|    |_______|
  * 
- * A NIL is a special kind of Cons in which the iscons method returns false.
- * A SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.
+ * A nil is a special kind of Cons in which the iscons method returns false.
+ * An atom is never in the cdr position. There will be a cons with a nil cdr and a car containing the atom.
  * 
  */
 export class Cons implements U {
@@ -103,7 +103,7 @@ export class Cons implements U {
         }
     }
     /**
-     * Returns the car property if it is defined, otherwise NIL.
+     * Returns the car property if it is defined, otherwise nil.
      * The returned item is reference counted.
      */
     get car(): U {
@@ -116,7 +116,7 @@ export class Cons implements U {
         }
     }
     /**
-     * Returns the cdr property if it is defined, otherwise NIL.
+     * Returns the cdr property if it is defined, otherwise nil.
      * The returned item is reference counted.
      */
     get cdr(): Cons {
@@ -172,14 +172,14 @@ export class Cons implements U {
         else if (is_atom(other)) {
             return false;
         }
-        else if (other.isnil()) {
-            return this.isnil();
+        else if (other.isnil) {
+            return this.isnil;
         }
         else {
             return false;
         }
     }
-    iscons(): boolean {
+    get iscons(): boolean {
         if (this.#car) {
             return true;
         }
@@ -187,7 +187,7 @@ export class Cons implements U {
             return false;
         }
     }
-    isnil(): boolean {
+    get isnil(): boolean {
         if (this.#car) {
             return false;
         }
@@ -196,7 +196,7 @@ export class Cons implements U {
         }
     }
     public toString(): string {
-        // If you call car or cdr you get an infinite loop because NIL is a Cons.
+        // If you call car or cdr you get an infinite loop because nil is a Cons.
         const head = this.#car;
         const tail = this.#cdr;
         if (head) {
@@ -230,7 +230,7 @@ export class Cons implements U {
      * Return everything except the first item in the list.
      */
     tail(): U[] {
-        if (this.isnil()) {
+        if (this.isnil) {
             throw new Error("tail property is not allowed for the empty list.");
         }
         else {
@@ -247,7 +247,7 @@ export class Cons implements U {
      * Maps the elements of the list using a mapping function.
      */
     map(f: (a: U) => U): Cons {
-        if (this.isnil()) {
+        if (this.isnil) {
             return this;
         }
         else {
@@ -261,7 +261,7 @@ export class Cons implements U {
      */
     get length(): number {
         // console.lg("Cons.length", "is_cons", is_cons(this), "is_nil", is_nil(this));
-        if (this.isnil()) {
+        if (this.isnil) {
             return 0;
         }
         else {
@@ -309,7 +309,7 @@ export class Cons implements U {
      * (item0 item1 item2 ...)
      */
     item(index: number): U {
-        if (index >= 0 && !this.isnil()) {
+        if (index >= 0 && !this.isnil) {
             if (index === 0) {
                 return this.car;
             }
@@ -336,7 +336,7 @@ export function cons(car: U, cdr: U, pos?: number, end?: number): Cons {
 export function pos_end_items_to_cons(pos: number | undefined, end: number | undefined, ...items: U[]): Cons {
     if (items.length > 0) {
         let node: Cons = nil;
-        // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
+        // Iterate in reverse order so that we build up a nil-terminated list from the right (nil).
         for (let i = items.length - 1; i > 0; i--) {
             node = new Cons(items[i], node, void 0, void 0);
         }
@@ -366,7 +366,7 @@ export function is_atom(expr: U): boolean {
     if (is_cons(expr)) {
         return false;
     }
-    else if (is_nil(expr)) {
+    else if (expr.isnil) {
         return false;
     }
     else {
@@ -375,8 +375,8 @@ export function is_atom(expr: U): boolean {
 }
 
 /**
- * Returns true if arg is a Cons and is not NIL.
- * For NIL testing, test for identical equality to NIL.
+ * Returns true if arg is a Cons and is not nil.
+ * For nil testing, test for identical equality to nil.
  */
 export function is_cons(expr: U): expr is Cons {
     if (typeof expr === 'undefined') {
@@ -384,7 +384,7 @@ export function is_cons(expr: U): expr is Cons {
     }
     else {
         if (expr instanceof Cons) {
-            return !expr.isnil();
+            return !expr.isnil;
         }
         else {
             return false;
@@ -393,15 +393,15 @@ export function is_cons(expr: U): expr is Cons {
 }
 
 /**
- * 
+ * @deprecated Use expr.isnil instead.
  */
 export function is_nil(expr: U): boolean {
-    return expr.isnil();
+    return expr.isnil;
 }
 
 /**
  * Returns the car property of the tree node if it is a Cons.
- * Otherwise, returns NIL.
+ * Otherwise, returns nil.
  */
 export function car(node: U): U {
     if (is_cons(node)) {
@@ -414,7 +414,7 @@ export function car(node: U): U {
 
 /**
  * Returns the cdr property of the tree node if it is a Cons.
- * Otherwise, returns NIL.
+ * Otherwise, returns nil.
  */
 export function cdr(node: U): Cons {
     if (is_cons(node)) {
