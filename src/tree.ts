@@ -9,8 +9,8 @@ export interface U {
     addRef(): void;
     contains(needle: U): boolean;
     equals(other: U): boolean;
-    isCons(): boolean;
-    isNil(): boolean;
+    iscons(): boolean;
+    isnil(): boolean;
     release(): void;
     pos?: number;
     end?: number;
@@ -22,12 +22,12 @@ export interface U {
  * @returns 
  */
 export function is_singleton(expr: Cons): boolean {
-    if (expr.isNil()) {
+    if (expr.isnil()) {
         // Nope, it's the empty list.
         return false;
     }
     const cdr_expr = expr.cdr;
-    if (cdr_expr.isNil()) {
+    if (cdr_expr.isnil()) {
         return true;
     }
     else {
@@ -57,7 +57,7 @@ export function is_singleton(expr: Cons): boolean {
  *                       |       |    |       |    |       |
  *                       |_______|    |_______|    |_______|
  * 
- * A NIL is a special kind of Cons in which the isCons method returns false.
+ * A NIL is a special kind of Cons in which the iscons method returns false.
  * A SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.
  * 
  */
@@ -172,14 +172,14 @@ export class Cons implements U {
         else if (is_atom(other)) {
             return false;
         }
-        else if (other.isNil()) {
-            return this.isNil();
+        else if (other.isnil()) {
+            return this.isnil();
         }
         else {
             return false;
         }
     }
-    isCons(): boolean {
+    iscons(): boolean {
         if (this.#car) {
             return true;
         }
@@ -187,7 +187,7 @@ export class Cons implements U {
             return false;
         }
     }
-    isNil(): boolean {
+    isnil(): boolean {
         if (this.#car) {
             return false;
         }
@@ -230,7 +230,7 @@ export class Cons implements U {
      * Return everything except the first item in the list.
      */
     tail(): U[] {
-        if (this.isNil()) {
+        if (this.isnil()) {
             throw new Error("tail property is not allowed for the empty list.");
         }
         else {
@@ -247,7 +247,7 @@ export class Cons implements U {
      * Maps the elements of the list using a mapping function.
      */
     map(f: (a: U) => U): Cons {
-        if (this.isNil()) {
+        if (this.isnil()) {
             return this;
         }
         else {
@@ -261,7 +261,7 @@ export class Cons implements U {
      */
     get length(): number {
         // console.lg("Cons.length", "is_cons", is_cons(this), "is_nil", is_nil(this));
-        if (this.isNil()) {
+        if (this.isnil()) {
             return 0;
         }
         else {
@@ -309,7 +309,7 @@ export class Cons implements U {
      * (item0 item1 item2 ...)
      */
     item(index: number): U {
-        if (index >= 0 && !this.isNil()) {
+        if (index >= 0 && !this.isnil()) {
             if (index === 0) {
                 return this.car;
             }
@@ -384,7 +384,7 @@ export function is_cons(expr: U): expr is Cons {
     }
     else {
         if (expr instanceof Cons) {
-            return !expr.isNil();
+            return !expr.isnil();
         }
         else {
             return false;
@@ -396,7 +396,7 @@ export function is_cons(expr: U): expr is Cons {
  * 
  */
 export function is_nil(expr: U): boolean {
-    return expr.isNil();
+    return expr.isnil();
 }
 
 /**
