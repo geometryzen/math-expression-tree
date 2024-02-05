@@ -18,8 +18,6 @@ export interface U {
 
 /**
  * Determines whether a Cons expression contains a single item.
- * @param expr 
- * @returns 
  */
 export function is_singleton(expr: Cons): boolean {
     if (expr.isnil) {
@@ -318,19 +316,35 @@ export class Cons implements U {
                 if (is_cons(argList)) {
                     return argList.item(index - 1);
                 }
+                else {
+                    return nil;
+                }
             }
         }
-        throw new Error("index out of bounds.");
+        else {
+            return nil;
+        }
+        // throw new Error("index out of bounds.");
+    }
+    get item0(): U {
+        return this.item(0);
+    }
+    get item1(): U {
+        return this.item(1);
+    }
+    get item2(): U {
+        return this.item(2);
+    }
+    get item3(): U {
+        return this.item(3);
+    }
+    get item4(): U {
+        return this.item(4);
     }
 }
 
-export function cons(car: U, cdr: U, pos?: number, end?: number): Cons {
-    if (cdr instanceof Cons) {
-        return new Cons(car, cdr, pos, end);
-    }
-    else {
-        throw new Error();
-    }
+export function cons(car: U, cdr: Cons, pos?: number, end?: number): Cons {
+    return new Cons(car, cdr, pos, end);
 }
 
 export function pos_end_items_to_cons(pos: number | undefined, end: number | undefined, ...items: U[]): Cons {

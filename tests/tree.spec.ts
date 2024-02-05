@@ -1,3 +1,4 @@
+import { Cons0, Cons1, Cons2, Cons3, Cons4 } from '../src/helpers';
 import { car, cdr, Cons, cons, is_atom, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from "../src/tree";
 
 /**
@@ -101,12 +102,21 @@ test("cdr", function () {
 });
 test("length", function () {
     expect(nil.length).toBe(0);
-    const foo = new Atom("foo");
-    const bar = new Atom("bar");
-    const X = items_to_cons(foo);
-    const Y = items_to_cons(foo, bar);
-    expect(X.length).toBe(1);
-    expect(Y.length).toBe(2);
+    const a = new Atom("a");
+    const b = new Atom("b");
+    const c = new Atom("c");
+    const d = new Atom("d");
+    const e = new Atom("3");
+    const X0 = items_to_cons(a) as Cons0<Atom>;
+    const X1 = items_to_cons(a, b) as Cons1<Atom, Atom>;
+    const X2 = items_to_cons(a, b, c) as Cons2<Atom, Atom, Atom>;
+    const X3 = items_to_cons(a, b, c, d) as Cons3<Atom, Atom, Atom, Atom>;
+    const X4 = items_to_cons(a, b, c, d, e) as Cons4<Atom, Atom, Atom, Atom, Atom>;
+    expect(X0.length).toBe(1);
+    expect(X1.length).toBe(2);
+    expect(X2.length).toBe(3);
+    expect(X3.length).toBe(4);
+    expect(X4.length).toBe(5);
 });
 test("equal_cons_cons", function () {
     expect(nil.length).toBe(0);
@@ -231,17 +241,28 @@ test("Cons.rhs", function () {
     const foo = new Atom("foo");
     const bar = new Atom("bar");
     const baz = new Atom("baz");
-    const X = items_to_cons(foo, bar, baz);
+    const X = items_to_cons(foo, bar, baz) as Cons2<Atom, Atom, Atom>;
     expect(X.rhs).toBe(baz);
 });
 test("Cons.item(index: number): U", function () {
-    const foo = new Atom("foo");
-    const bar = new Atom("bar");
-    const baz = new Atom("baz");
-    const X = items_to_cons(foo, bar, baz);
-    expect(X.item(0)).toBe(foo);
-    expect(X.item(1)).toBe(bar);
-    expect(X.item(2)).toBe(baz);
+    const opr = new Atom("opr");
+    const a = new Atom("a");
+    const b = new Atom("b");
+    const c = new Atom("c");
+    const d = new Atom("d");
+    const X = items_to_cons(opr, a, b, c, d) as Cons4<Atom, Atom, Atom, Atom, Atom>;
+    expect(X.item(0)).toBe(opr);
+    expect(X.item(1)).toBe(a);
+    expect(X.item(2)).toBe(b);
+    expect(X.item(3)).toBe(c);
+    expect(X.item(4)).toBe(d);
+    expect(X.item(5).isnil).toBe(true);
+    expect(X.item(-1).isnil).toBe(true);
+    expect(X.item0).toBe(opr);
+    expect(X.item1).toBe(a);
+    expect(X.item2).toBe(b);
+    expect(X.item3).toBe(c);
+    expect(X.item4).toBe(d);
 });
 test("cons(car: U, cdr: U): Cons", function () {
     expect(nil.car).toBe(nil);
