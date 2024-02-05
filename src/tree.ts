@@ -119,13 +119,9 @@ export class Cons implements U {
      */
     get cdr(): Cons {
         if (this.#cdr) {
-            if (this.#cdr instanceof Cons) {
-                this.#cdr.addRef();
-                return this.#cdr;
-            }
-            else {
-                throw new Error();
-            }
+            const cdr = assert_cons_or_nil(this.#cdr);
+            cdr.addRef();
+            return cdr;
         }
         else {
             return nil;
@@ -388,21 +384,38 @@ export function is_atom(expr: U): boolean {
     }
 }
 
+export function is_cons_or_nil(expr: U): expr is Cons {
+    return expr instanceof Cons;
+}
+
+export function assert_cons_or_nil(expr: U): Cons {
+    if (is_cons_or_nil(expr)) {
+        return expr;
+    }
+    else {
+        throw new Error();
+    }
+}
+
+export function assert_cons(expr: U): Cons {
+    if (is_cons(expr)) {
+        return expr;
+    }
+    else {
+        throw new Error();
+    }
+}
+
 /**
  * Returns true if arg is a Cons and is not nil.
  * For nil testing, test for identical equality to nil.
  */
 export function is_cons(expr: U): expr is Cons {
-    if (typeof expr === 'undefined') {
-        return false;
+    if (is_cons_or_nil(expr)) {
+        return !expr.isnil;
     }
     else {
-        if (expr instanceof Cons) {
-            return !expr.isnil;
-        }
-        else {
-            return false;
-        }
+        return false;
     }
 }
 
