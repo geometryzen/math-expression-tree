@@ -221,7 +221,13 @@ export class Cons implements U {
         return this.car;
     }
     /**
-     * Return everything except the first item in the list.
+     * Exactly the same as the cdr property. Used for code-as-documentation.
+     */
+    get rest(): U {
+        return this.cdr;
+    }
+    /**
+     * Return everything except the first item in the list as a JavaScript array.
      */
     tail(): U[] {
         if (this.isnil) {

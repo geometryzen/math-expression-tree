@@ -100,6 +100,12 @@ test("cdr", function () {
     const X = items_to_cons(foo);
     expect(X.cdr).toBe(nil);
 });
+test("rest", function () {
+    expect(nil.rest).toBe(nil);
+    const foo = new Atom("foo");
+    const X = items_to_cons(foo);
+    expect(X.rest).toBe(nil);
+});
 test("length", function () {
     expect(nil.length).toBe(0);
     const a = new Atom("a");
