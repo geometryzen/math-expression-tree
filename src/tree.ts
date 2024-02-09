@@ -223,7 +223,7 @@ export class Cons implements U {
     /**
      * Exactly the same as the cdr property. Used for code-as-documentation.
      */
-    get rest(): U {
+    get rest(): Cons {
         return this.cdr;
     }
     /**
