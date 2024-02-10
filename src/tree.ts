@@ -16,6 +16,10 @@ export interface U {
     end?: number;
 }
 
+export interface Atom extends U {
+    get type(): boolean;
+}
+
 /**
  * Determines whether a Cons expression contains a single item.
  */
@@ -378,7 +382,7 @@ export function items_to_cons(...items: U[]): Cons {
  */
 export const nil = new Cons(void 0, void 0, void 0, void 0);
 
-export function is_atom(expr: U): boolean {
+export function is_atom(expr: U): expr is Atom {
     if (is_cons(expr)) {
         return false;
     }
