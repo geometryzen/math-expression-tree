@@ -17,7 +17,7 @@ export interface U {
 }
 
 export interface Atom extends U {
-    get type(): boolean;
+    readonly type: string;
 }
 
 /**
@@ -390,7 +390,8 @@ export function is_atom(expr: U): expr is Atom {
         return false;
     }
     else {
-        return true;
+        // eslint-disable-next-line no-prototype-builtins
+        return expr.hasOwnProperty('type');
     }
 }
 
