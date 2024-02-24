@@ -12,7 +12,7 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "noImplicitAny": true,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,

@@ -92,7 +92,7 @@ test("is_cons", function () {
     expect(is_cons(nil)).toBe(false);
     const X = items_to_cons(foo);
     expect(is_cons(X)).toBe(true);
-    expect(is_cons(void 0)).toBe(false);
+    expect(is_cons(void 0 as unknown as U)).toBe(false);
 });
 test("car", function () {
     expect(nil.car).toBe(nil);

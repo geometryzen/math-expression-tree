@@ -65,9 +65,9 @@ export function is_singleton(expr: Cons): boolean {
  */
 export class Cons implements U {
     #car: U | undefined;
-    #cdr: U | undefined;
+    #cdr: Cons | undefined;
     #refCount = 1;
-    constructor(car: U | undefined, cdr: U | undefined, public readonly pos?: number, public readonly end?: number) {
+    constructor(car: U | undefined, cdr: Cons | undefined, public readonly pos?: number, public readonly end?: number) {
         if (car) {
             car.addRef();
             this.#car = car;
@@ -133,6 +133,7 @@ export class Cons implements U {
     }
     /**
      * Exactly the same as the cdr property. Used for code-as-documentation.
+     * The returned item is reference counted.
      */
     get argList(): Cons {
         // The returned value is correctly reference counted because of the call through the external API.
@@ -220,12 +221,14 @@ export class Cons implements U {
     }
     /**
      * Exactly the same as the car property. Used for code-as-documentation.
+     * The returned item is reference counted.
      */
     get head(): U {
         return this.car;
     }
     /**
      * Exactly the same as the cdr property. Used for code-as-documentation.
+     * The returned item is reference counted.
      */
     get rest(): Cons {
         return this.cdr;
@@ -257,14 +260,27 @@ export class Cons implements U {
         else {
             const a = this.car;
             const b = this.cdr;
-            return new Cons(f(a), is_cons(b) ? b.map(f) : b, this.pos, this.end);
+            try {
+                const car = f(a);
+                const cdr = is_cons(b) ? b.map(f) : b;  // in the case b is nil, no need to reference count. 
+                try {
+                    return new Cons(car, cdr, this.pos, this.end);
+                }
+                finally {
+                    car.release();
+                    cdr.release();
+                }
+            }
+            finally {
+                a.release();
+                b.release();
+            }
         }
     }
     /**
      * Returns the length of the list.
      */
     get length(): number {
-        // console.lg("Cons.length", "is_cons", is_cons(this), "is_nil", is_nil(this));
         if (this.isnil) {
             return 0;
         }
@@ -281,14 +297,15 @@ export class Cons implements U {
     /**
      * A convenience property for the method item(0).
      * A useful shortcut when working with operators.
+     * The returned item is reference counted.
      */
     get opr(): U {
-        // TODO: this.car woul be more optimal.
         return this.item(0);
     }
     /**
      * A convenience property for the method item(1).
      * A useful shortcut when working with unary operators.
+     * The returned item is reference counted.
      */
     get arg(): U {
         return this.item(1);
@@ -296,6 +313,7 @@ export class Cons implements U {
     /**
      * A convenience property for the method item(1).
      * A useful shortcut when working with binary operators.
+     * The returned item is reference counted.
      */
     get lhs(): U {
         return this.item(1);
@@ -303,12 +321,14 @@ export class Cons implements U {
     /**
      * A convenience property for the method item(2).
      * A useful shortcut when working with binary operators.
+     * The returned item is reference counted.
      */
     get rhs(): U {
         return this.item(2);
     }
     /**
      * Returns the item at the specified (zero-based) index.
+     * The returned item is reference counted.
      * 
      * (item0 item1 item2 ...)
      */
@@ -319,11 +339,16 @@ export class Cons implements U {
             }
             else {
                 const argList = this.argList;
-                if (is_cons(argList)) {
-                    return argList.item(index - 1);
+                try {
+                    if (is_cons(argList)) {
+                        return argList.item(index - 1);
+                    }
+                    else {
+                        return nil;
+                    }
                 }
-                else {
-                    return nil;
+                finally {
+                    argList.release();
                 }
             }
         }
@@ -356,12 +381,24 @@ export function cons(car: U, cdr: Cons, pos?: number, end?: number): Cons {
 export function pos_end_items_to_cons(pos: number | undefined, end: number | undefined, ...items: U[]): Cons {
     if (items.length > 0) {
         let node: Cons = nil;
+        node.addRef();
         // Iterate in reverse order so that we build up a nil-terminated list from the right (nil).
         for (let i = items.length - 1; i > 0; i--) {
-            node = new Cons(items[i], node, void 0, void 0);
+            const temp = node;
+            try {
+                node = new Cons(items[i], node, void 0, void 0);
+            }
+            finally {
+                temp.release();
+            }
         }
-        node = new Cons(items[0], node, pos, end);
-        return node;
+        const temp = node;
+        try {
+            return new Cons(items[0], node, pos, end);
+        }
+        finally {
+            temp.release();
+        }
     }
     else {
         if (typeof pos === 'number' || typeof end === 'number') {
@@ -431,7 +468,7 @@ export function is_cons(expr: U): expr is Cons {
 }
 
 /**
- * @deprecated Use expr.isnil instead.
+ *
  */
 export function is_nil(expr: U): boolean {
     return expr.isnil;
@@ -440,6 +477,7 @@ export function is_nil(expr: U): boolean {
 /**
  * Returns the car property of the tree node if it is a Cons.
  * Otherwise, returns nil.
+ * The returned item is reference counted.
  */
 export function car(node: U): U {
     if (is_cons(node)) {
@@ -453,6 +491,7 @@ export function car(node: U): U {
 /**
  * Returns the cdr property of the tree node if it is a Cons.
  * Otherwise, returns nil.
+ * The returned item is reference counted.
  */
 export function cdr(node: U): Cons {
     if (is_cons(node)) {
