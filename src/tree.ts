@@ -1,17 +1,20 @@
+export interface Shareable {
+    addRef(): void;
+    release(): void;
+}
+
 /**
  * The handle for any expression in the system.
  */
-export interface U {
+export interface U extends Shareable {
     /**
      * Contains the name of the type.
      */
     readonly name: string;
-    addRef(): void;
     contains(needle: U): boolean;
     equals(other: U): boolean;
     get iscons(): boolean;
     get isnil(): boolean;
-    release(): void;
     pos?: number;
     end?: number;
 }
